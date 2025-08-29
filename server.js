@@ -23,7 +23,7 @@ app.post("/bfhl", (req, res) => {
 
     data.forEach(item => {
       if (/^-?\d+$/.test(item)) {
-        // It's an integer (string format)
+        // It's an integer
         let num = Number(item);
         if (num % 2 === 0) {
           evenNumbers.push(item); // keep as string
@@ -42,17 +42,19 @@ app.post("/bfhl", (req, res) => {
 
     // Build concat string: reverse alphabets and apply alternating caps
     let concatString = "";
-    let joined = alphabets.join(""); // concat all words
+    let joined = alphabets.join(""); 
     let reversed = joined.split("").reverse().join("");
     for (let i = 0; i < reversed.length; i++) {
-      concatString += i % 2 === 0 ? reversed[i].toUpperCase() : reversed[i].toLowerCase();
+      concatString += i % 2 === 0 
+        ? reversed[i].toUpperCase() 
+        : reversed[i].toLowerCase();
     }
 
     const response = {
       is_success: true,
-      user_id: "Archit_Agarwal_15042005".toLowerCase(), // e.g. "john_doe_17091999"
-      email: "archit.agarwal1505@gmail.com",
-      roll_number: "22BCE2021",
+      user_id: "archit_agarwal_15052005",  // 👉 replace with your full name + DOB
+      email: "archit.agarwal1505@gmail.com", // 👉 replace with your VIT email
+      roll_number: "22BCE2021", // 👉 replace with your roll number
       odd_numbers: oddNumbers,
       even_numbers: evenNumbers,
       alphabets: alphabets,
@@ -72,8 +74,13 @@ app.post("/bfhl", (req, res) => {
   }
 });
 
+// Root GET route (so Render doesn’t show "Cannot GET /")
+app.get("/", (req, res) => {
+  res.send("✅ API is running! Use POST /bfhl");
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
