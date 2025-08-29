@@ -1,11 +1,13 @@
 const express = require("express");
 const app = express();
 
-app.use(express.json());
+app.use(express.json()); // ✅ Needed to parse JSON body
 
 // POST API
 app.post("/bfhl", (req, res) => {
   try {
+    console.log("POST /bfhl received body:", req.body); // Debugging log
+
     const data = req.body.data;
 
     if (!data || !Array.isArray(data)) {
@@ -23,7 +25,7 @@ app.post("/bfhl", (req, res) => {
 
     data.forEach(item => {
       if (/^-?\d+$/.test(item)) {
-        // It's an integer
+        // Integer check
         let num = Number(item);
         if (num % 2 === 0) {
           evenNumbers.push(item); // keep as string
@@ -32,17 +34,17 @@ app.post("/bfhl", (req, res) => {
         }
         sum += num;
       } else if (/^[a-zA-Z]+$/.test(item)) {
-        // It's an alphabet/word
+        // Alphabet check
         alphabets.push(item.toUpperCase());
       } else {
-        // Special character
+        // Special characters
         specialChars.push(item);
       }
     });
 
-    // Build concat string: reverse alphabets and apply alternating caps
+    // Build concat string (reverse + alternating caps)
     let concatString = "";
-    let joined = alphabets.join(""); 
+    let joined = alphabets.join("");
     let reversed = joined.split("").reverse().join("");
     for (let i = 0; i < reversed.length; i++) {
       concatString += i % 2 === 0 
@@ -52,9 +54,9 @@ app.post("/bfhl", (req, res) => {
 
     const response = {
       is_success: true,
-      user_id: "archit_agarwal_15052005",  // 👉 replace with your full name + DOB
-      email: "archit.agarwal1505@gmail.com", // 👉 replace with your VIT email
-      roll_number: "22BCE2021", // 👉 replace with your roll number
+      user_id: "archit_agarwal_15052005",  // replace with full name + DOB
+      email: "archit.agarwal1505@gmail.com", // replace with VIT email
+      roll_number: "22BCE2021", // replace with roll number
       odd_numbers: oddNumbers,
       even_numbers: evenNumbers,
       alphabets: alphabets,
@@ -63,10 +65,11 @@ app.post("/bfhl", (req, res) => {
       concat_string: concatString
     };
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
 
   } catch (err) {
-    res.status(500).json({
+    console.error("Error in /bfhl:", err); // log error
+    return res.status(500).json({
       is_success: false,
       message: "Internal server error",
       error: err.message
@@ -74,9 +77,9 @@ app.post("/bfhl", (req, res) => {
   }
 });
 
-// Root GET route (so Render doesn’t show "Cannot GET /")
+// GET root route
 app.get("/", (req, res) => {
-  res.send("✅ API is running! Use POST /bfhl");
+  res.send("✅ API is running! Use POST /bfhl with JSON body { data: [...] }");
 });
 
 // Start server
